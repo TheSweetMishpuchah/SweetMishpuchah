@@ -436,6 +436,10 @@
   }
   .cake-card:hover .cake-thumb-emoji { transform: scale(1.1); }
 
+.cake-thumb img.cake-thumb-img { width: 100%; height: 100%; object-fit: cover; /* crop-to-fill, preserves aspect */ display: block; transition: transform 0.3s ease; } .cake-card:hover img.cake-thumb-img { transform: scale(1.03); }
+
+.cake-modal img.cake-modal-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  
   .cake-thumb-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(to bottom, transparent 60%, rgba(42,33,24,0.5));
@@ -1462,7 +1466,7 @@
       <button class="cake-modal-nav cake-modal-prev" onclick="modalNav(-1)" aria-label="Previous cake">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       </button>
-      <div class="cake-modal-emoji" id="cakeModalEmoji">🎂</div>
+      (cake.img || cake.image) ? <img src="${cake.img || cake.image}" alt="${(cake.name||'Cake')}" class="cake-modal-img"> : <div class="cake-modal-emoji">${cake.emoji || '🍰'}</div>;
       <button class="cake-modal-close" onclick="closeCakeModalDirect()" aria-label="Close">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
@@ -1606,8 +1610,11 @@ function buildRibbon() {
   track.innerHTML = allCakes.map((cake, i) => `
     <div class="cake-card" onclick="openCakeModal(${cake.id})" data-index="${i}">
       <div class="cake-thumb">
-        <div class="cake-thumb-emoji">${cake.emoji}</div>
-        <div class="cake-thumb-overlay"></div>
+         if (cake.img || cake.image) { const imgEl = document.createElement('img'); imgEl.src = cake.img || cake.image; imgEl.alt = (cake.name ? cake.name + ' — Cake' : 'Cake'); imgEl.className = 'cake-thumb-img'; thumb.appendChild(imgEl);
+
+const overlay = document.createElement('div'); overlay.className = 'cake-thumb-overlay'; thumb.appendChild(overlay); } else { const emoji = document.createElement('div'); emoji.className = 'cake-thumb-emoji'; emoji.textContent = cake.emoji || '🍰'; thumb.appendChild(emoji);
+
+const overlay = document.createElement('div'); overlay.className = 'cake-thumb-overlay'; thumb.appendChild(overlay); }
       </div>
       <div class="cake-card-body">
         <div class="cake-name">${cake.name}</div>
